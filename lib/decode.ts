@@ -8,9 +8,9 @@ export class UnsupportedImageError extends Error {
 	}
 }
 
-// Normal first, then inverted (light-on-dark codes).
-export function decodeRgba(data: Uint8ClampedArray, width: number, height: number): string | null {
-	return jsQR(data, width, height, { inversionAttempts: "attemptBoth" })?.data ?? null;
+// Normal first, then inverted (light-on-dark codes). Live camera frames skip the second pass.
+export function decodeRgba(data: Uint8ClampedArray, width: number, height: number, tryInverted = true): string | null {
+	return jsQR(data, width, height, { inversionAttempts: tryInverted ? "attemptBoth" : "dontInvert" })?.data ?? null;
 }
 
 const isPng = (b: Uint8Array) => b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47;

@@ -209,7 +209,7 @@ export const PRESET_LABELS: Record<PresetName, string> = {
 	sunrise: "Sunrise Pop",
 };
 
-const SAFE_IMAGE = /^(data:image\/(png|jpe?g|gif|webp|svg\+xml);base64,[A-Za-z0-9+/=]+|https:\/\/\S+)$/;
+const SAFE_IMAGE = /^(data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+|https:\/\/\S+)$/i;
 
 /**
  * Coerces untrusted input (MCP args, localStorage) into a valid config.
