@@ -1,0 +1,42 @@
+{
+  "name": "tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Small, no-BS web tools. Also an MCP server for agents.",
+  "author": "DeadIndian",
+  "license": "MIT",
+  "repository": "github:DeadIndian/tools",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "tsx --test test/*.test.ts",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.3.1",
+    "jpeg-js": "^0.4.4",
+    "jsqr": "^1.4.0",
+    "mcp-handler": "^2.3.0",
+    "next": "^16.4.1",
+    "qrcode-generator": "^2.0.4",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "upng-js": "^2.1.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.12",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.151.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "workerd@1.20261012.1": true
+  }
+}
