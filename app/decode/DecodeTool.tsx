@@ -13,6 +13,9 @@ function pixels(source: CanvasImageSource, width: number, height: number) {
 	canvas.width = width;
 	canvas.height = height;
 	const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+	// White first: transparent pixels read back as black, which hides dark-on-transparent codes.
+	ctx.fillStyle = "#fff";
+	ctx.fillRect(0, 0, width, height);
 	ctx.drawImage(source, 0, 0, width, height);
 	return ctx.getImageData(0, 0, width, height);
 }

@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import UPNG from "upng-js";
+import { readFileSync, readdirSync } from "node:fs";
+import { encode as encodePng } from "fast-png";
 import jpeg from "jpeg-js";
 import { makeQr, plainSvg, QrTooLongError } from "../lib/qr";
 import { renderCustomSvg, normalizeConfig, DEFAULT_CONFIG, PRESETS } from "../lib/custom-qr";
@@ -42,7 +43,7 @@ test("decodeRgba reads inverted (light-on-dark) codes", () => {
 
 test("decodeImageBytes handles PNG and JPEG, rejects junk", () => {
 	const { data, size } = rasterize("png & jpeg");
-	const png = new Uint8Array(UPNG.encode([data.buffer as ArrayBuffer], size, size, 0));
+	const png = encodePng({ width: size, height: size, data: new Uint8Array(data.buffer), channels: 4, depth: 8 });
 	assert.equal(decodeImageBytes(png), "png & jpeg");
 	const jpg = jpeg.encode({ data: Buffer.from(data), width: size, height: size }, 95).data;
 	assert.equal(decodeImageBytes(new Uint8Array(jpg)), "png & jpeg");
@@ -97,4 +98,13 @@ test("old v1 payloads from thisqr.works still decode", () => {
 	assert.throws(() => decodePayload(""), /empty-hash/);
 	assert.throws(() => decodePayload(Buffer.from("[1]").toString("base64url")), /invalid-structure/);
 	assert.throws(() => decodePayload(Buffer.from('{"v":1}').toString("base64url")), /missing-s/);
+});
+
+// Real PNG flavors (made with ImageMagick): 1/4-bit gray, palette, interlaced, and transparent
+// RGBA/gray+alpha at 8 and 16 bit. Odd 151px width exercises sub-byte row padding.
+test("decodeImageBytes reads every PNG flavor, including transparent ones", () => {
+	const dir = new URL("./fixtures/", import.meta.url);
+	const files = readdirSync(dir).filter((f) => f.endsWith(".png"));
+	assert.ok(files.length >= 7);
+	for (const f of files) assert.equal(decodeImageBytes(new Uint8Array(readFileSync(new URL(f, dir)))), "fixture ok", f);
 });

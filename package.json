@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/server": "^2.3.1",
+    "fast-png": "^8.0.0",
     "jpeg-js": "^0.4.4",
     "jsqr": "^1.4.0",
     "mcp-handler": "^2.3.0",
@@ -23,7 +24,6 @@
     "qrcode-generator": "^2.0.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "upng-js": "^2.1.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
