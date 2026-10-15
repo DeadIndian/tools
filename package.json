@@ -4,6 +4,7 @@
   "private": true,
   "description": "Small, no-BS web tools. Also an MCP server for agents.",
   "author": "DeadIndian",
+  "license": "GPL-3.0-only",
   "repository": "github:DeadIndian/tools",
   "scripts": {
     "dev": "next dev",

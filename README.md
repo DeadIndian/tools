@@ -69,6 +69,10 @@ lib/            tool logic shared by web + MCP
 test/           node:test checks
 ```
 
+## License
+
+[GNU GPL v3](LICENSE)
+
 ---
 
 by [DeadIndian](https://github.com/DeadIndian)
