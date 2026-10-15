@@ -14,7 +14,7 @@ import {
 } from "@/lib/custom-qr";
 import { decodeImageBytes, UnsupportedImageError } from "@/lib/decode";
 import { cleanMap, profileUrl } from "@/lib/social";
-import { STYLE_NAMES, styleMarkup, styleText, unstyleText, type StyleName } from "@/lib/text-style";
+import { ALL_STYLE_NAMES, applyStyle, styleMarkup, unstyleText, xLength } from "@/lib/text-style";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
@@ -217,16 +217,19 @@ const handler = createMcpHandler(
 			{
 				title: "Bold/italic Unicode text",
 				description:
-					"Make bold, italic, monospace (and more) text for plain-text fields that have no formatting: LinkedIn, X, Instagram, YouTube titles, chat bios. Swaps a-z, A-Z, 0-9 for look-alike Unicode characters; returns paste-ready text. Mark spans with **bold**, *italic*, ***bold italic***, `monospace` (everything else stays plain), or set `style` to convert the whole text. URLs, #hashtags and @mentions are never styled. Use sparingly (headings, key words): screen readers and search handle styled letters poorly. Do not use for Markdown/HTML destinations.",
+					"Make bold, italic, strikethrough, underline, monospace (and more) text for plain-text fields that have no formatting: LinkedIn, X, Instagram, YouTube titles, chat bios. Swaps letters for look-alike Unicode characters; returns paste-ready text plus its X (Twitter) length. Mark spans with **bold**, *italic*, ***bold italic***, ~~strikethrough~~, __underline__, `monospace` (marks nest; everything else stays plain), or set `style` to convert the whole text. URLs, #hashtags and @mentions are never styled. Use sparingly (headings, key words): screen readers and search handle styled letters poorly. Do not use for Markdown/HTML destinations.",
 				inputSchema: z.object({
 					text: z.string().min(1).max(10_000),
 					style: z
-						.enum(STYLE_NAMES as [StyleName, ...StyleName[]])
+						.enum(ALL_STYLE_NAMES)
 						.optional()
-						.describe("Convert the whole text to this style. Omit to use **marks** instead."),
+						.describe("Convert the whole text to this style. Omit to use marks instead."),
 				}),
 			},
-			safe(({ text, style }) => ok(style ? styleText(text, style) : styleMarkup(text))),
+			safe(({ text, style }) => {
+				const out = style ? applyStyle(text, style) : styleMarkup(text);
+				return ok(out, `X length: ${xLength(out)}/280`);
+			}),
 		);
 
 		server.registerTool(

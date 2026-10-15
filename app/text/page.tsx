@@ -7,7 +7,7 @@ import { TextTool } from "./TextTool";
 export const metadata = toolMetadata("/text", {
 	title: "Bold & Italic Text Generator (Unicode)",
 	description:
-		"Convert text to Unicode bold, italic, monospace and more for LinkedIn, X, Instagram and other plain-text fields. Free, no login, also an MCP tool for agents.",
+		"Bold, italic, strikethrough, underline and more for LinkedIn, X, Instagram and other plain-text fields. Select, click, copy. Exact X character count. Free, no login, also an MCP tool for agents.",
 });
 
 const FAQ: [string, React.ReactNode][] = [
@@ -22,9 +22,15 @@ const FAQ: [string, React.ReactNode][] = [
 	[
 		"How do I style only part of the text?",
 		<>
-			Wrap it: <code>**bold**</code>, <code>*italic*</code>, <code>***bold italic***</code>, <code>`monospace`</code>. The
-			&ldquo;Your marks&rdquo; row converts only the wrapped parts.
+			Select it and press a button, or use <kbd>Ctrl</kbd>+<kbd>B</kbd> bold, <kbd>Ctrl</kbd>+<kbd>I</kbd> italic,{" "}
+			<kbd>Ctrl</kbd>+<kbd>U</kbd> underline, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> strikethrough,{" "}
+			<kbd>Ctrl</kbd>+<kbd>E</kbd> monospace. Press again to remove it. With nothing selected, the whole text changes.
+			<kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes.
 		</>,
+	],
+	[
+		"How do strikethrough and underline work?",
+		"They add a combining line character after each letter, so they work on any character (and on top of bold or italic). Some fonts draw the line slightly off; most phones and browsers show it fine.",
 	],
 	[
 		"Why are some characters not styled?",
@@ -36,14 +42,19 @@ const FAQ: [string, React.ReactNode][] = [
 	],
 	[
 		"Any downsides?",
-		"Screen readers may read styled letters one by one or skip them, and search (including LinkedIn's) won't match styled words. Use it for a heading or a few words, not whole paragraphs. Each styled letter is also two UTF-16 units, so some sites count it as two characters.",
+		"Screen readers may read styled letters one by one or skip them, and search (including LinkedIn's) won't match styled words. Use it for a heading or a few words, not whole paragraphs.",
 	],
-	["Can I undo it?", "Yes. Paste styled text in; the “Plain” row gives the normal text back."],
+	[
+		"Why does the X counter go up faster?",
+		"X counts most styled letters as 2 characters, every emoji as 2, and every link as 23, whatever its real length. The counter uses X's own rules, so what it shows is what X will show. Other sites may count styled letters as 1 or 2.",
+	],
+	["Can I undo it?", "Yes. Paste styled text in and press Clear (whole text, or just the selected part)."],
 	[
 		"Can my AI agent do this?",
 		<>
-			Yes. Connect the MCP server at <code>{SITE.url}/api/mcp</code> and use <code>text_style</code> (with{" "}
-			<code>**marks**</code> or a whole-text style) and <code>text_unstyle</code>. <a href="/#mcp">Setup</a>.
+			Yes. Connect the MCP server at <code>{SITE.url}/api/mcp</code> and use <code>text_style</code> with marks (
+			<code>**bold**</code> <code>*italic*</code> <code>~~strike~~</code> <code>__underline__</code>{" "}
+			<code>`mono`</code>) or a whole-text style, and <code>text_unstyle</code> to undo. <a href="/#mcp">Setup</a>.
 		</>,
 	],
 	["Is my text sent anywhere?", "No. Conversion runs in your browser."],
@@ -57,7 +68,7 @@ export default function Page() {
 			<main className="content">
 				<section className="create-card wide">
 					<h1 className="card-title">Bold &amp; Italic Text</h1>
-					<p className="card-lede">Styled text for places that only take plain text. Type, then copy the style you want.</p>
+					<p className="card-lede">Formatting for places that only take plain text. Select words, press a button, copy.</p>
 					<TextTool />
 					<h2 className="section-title" style={{ marginTop: "2.5rem" }}>
 						Questions

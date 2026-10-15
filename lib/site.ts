@@ -45,7 +45,7 @@ export const TOOLS: Tool[] = [
 	{
 		href: "/text",
 		name: "Bold & Italic Text",
-		description: "𝗕𝗼𝗹𝗱, 𝘪𝘵𝘢𝘭𝘪𝘤 and more for plain-text fields like LinkedIn. Copy, paste.",
+		description: "𝗕𝗼𝗹𝗱, 𝘪𝘵𝘢𝘭𝘪𝘤, s̶t̶r̶i̶k̶e̶ and more for LinkedIn and X. Select, click, copy.",
 		category: "Text",
 	},
 ];

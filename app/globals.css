@@ -836,6 +836,129 @@ input[type="range"] {
 
 /* ---------- Text styles ---------- */
 
+.editor {
+	border: 1px solid var(--border-strong);
+	border-radius: 12px;
+	background: var(--surface);
+	overflow: hidden;
+}
+
+.editor:focus-within {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0.45rem;
+	border-bottom: 1px solid var(--border);
+	background: var(--surface-2);
+}
+
+.toolbar-gap {
+	flex: 1;
+}
+
+.tool-btn,
+.tool-select {
+	height: 2.1rem;
+	border: 1px solid transparent;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--text);
+	font: inherit;
+	cursor: pointer;
+}
+
+.tool-btn {
+	min-width: 2.1rem;
+	font-size: 1.05rem;
+}
+
+.tool-btn.wide {
+	padding: 0 0.7rem;
+	font-size: 0.88rem;
+	color: var(--muted);
+}
+
+.tool-select {
+	padding: 0 0.5rem;
+	font-size: 0.9rem;
+}
+
+.tool-btn:hover,
+.tool-btn:focus-visible,
+.tool-select:hover,
+.tool-select:focus-visible {
+	border-color: var(--border-strong);
+	background: var(--surface);
+	outline: none;
+}
+
+.editor-area {
+	display: block;
+	width: 100%;
+	min-height: 10rem;
+	padding: 0.85rem 1rem;
+	border: none;
+	resize: vertical;
+	background: var(--surface);
+	color: var(--text);
+	font: inherit;
+	font-size: 1.05rem;
+	line-height: 1.55;
+}
+
+.editor-area:focus {
+	outline: none;
+}
+
+.editor-foot {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.5rem 0.5rem 0.5rem 1rem;
+	border-top: 1px solid var(--border);
+	font-size: 0.85rem;
+	color: var(--muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.editor-foot .muted-note {
+	flex: 1;
+}
+
+.editor-foot .button {
+	padding: 0.5rem 1rem;
+	font-size: 0.9rem;
+}
+
+.editor-foot .over {
+	color: #c0392b;
+	font-weight: 600;
+}
+
+.button:disabled {
+	opacity: 0.5;
+	cursor: default;
+	box-shadow: none;
+}
+
+.all-styles {
+	margin-top: 1.25rem;
+}
+
+.all-styles > summary {
+	margin-bottom: 0.75rem;
+	font-weight: 600;
+	font-size: 0.92rem;
+	color: var(--text-2);
+	cursor: pointer;
+}
+
 .style-list {
 	margin: 0;
 	padding: 0;
@@ -891,4 +1014,14 @@ input[type="range"] {
 	.style-label {
 		grid-column: 1 / -1;
 	}
+}
+
+kbd {
+	padding: 0.05rem 0.35rem;
+	border: 1px solid var(--border-strong);
+	border-bottom-width: 2px;
+	border-radius: 4px;
+	background: var(--surface);
+	font-family: var(--font-mono);
+	font-size: 0.8em;
 }
