@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
+	// Left unbundled so OpenNext resolves it with the "workerd" export condition. Bundled by Next,
+	// it picks the Node shim (Ajv), which uses new Function and crashes on Cloudflare Workers.
+	serverExternalPackages: ["@modelcontextprotocol/server", "mcp-handler"],
 	// Old static-site URLs (thisqr.works era). Printed QRs point at /socials/profile.html#...;
 	// browsers carry the #hash across redirects, so those keep working.
 	async redirects() {

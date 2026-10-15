@@ -1,74 +1,74 @@
-# thisqr.works
+# tools
 
-`thisqr.works` is a static, browser-first QR toolkit.
+Small tools. No BS. **[tools.golla.in](https://tools.golla.in)**
 
-Core idea: fast tools, no signup, no account flow.
+Niche web tools I use day to day, open source so anyone can use them. No login, no signup, no tracking. Every tool also works as an [MCP](https://modelcontextprotocol.io) tool, so agents can call it.
 
-## What Is Included
+## Tools
 
-- `QR Generator` (`/qr/`): Generate QR codes from text or URLs and export SVG.
-- `Custom QR` (`/custom/`): Style QR codes (colors, geometry, gradients) and export.
-- `QR Decoder` (`/decode/`): Decode QR content from image upload or camera scan.
-- `Social Media QR` (`/socials/create.html`): Build one QR that points to your socials profile.
+| Tool | Web | MCP tool |
+|---|---|---|
+| QR Generator | [`/qr`](https://tools.golla.in/qr) | `qr_generate` |
+| Custom QR (shapes, gradients, frame, logo, caption) | [`/custom`](https://tools.golla.in/custom) | `qr_custom` |
+| QR Decoder (upload, paste, camera) | [`/decode`](https://tools.golla.in/decode) | `qr_decode` |
+| Social Links QR | [`/socials/create`](https://tools.golla.in/socials/create) | `social_profile_link` |
 
-## Project Structure
+The web tools run entirely in your browser. The MCP endpoint processes each request and stores nothing.
+
+## Use with agents
+
+Endpoint: `https://tools.golla.in/api/mcp` (Streamable HTTP, stateless, no auth).
+
+Claude Code:
+
+```bash
+claude mcp add --transport http tools https://tools.golla.in/api/mcp
+```
+
+Other clients:
+
+```json
+{ "mcpServers": { "tools": { "url": "https://tools.golla.in/api/mcp" } } }
+```
+
+For stdio-only clients, use `npx -y mcp-remote https://tools.golla.in/api/mcp`.
+
+The QR tools return SVG markup as text. `qr_decode` takes base64 data, a `data:` URI, or an `https://` URL for a PNG or JPEG (max 5 MB).
+
+## Develop
+
+```bash
+npm install
+npm run dev      # http://localhost:3000, MCP at /api/mcp
+npm test         # lib tests (node:test)
+npm run preview  # build and run on the local Cloudflare Workers runtime
+```
+
+## Deploy
+
+Hosted on Cloudflare Workers through [OpenNext](https://opennext.js.org/cloudflare). The custom domain is set in `wrangler.jsonc`.
+
+```bash
+npx wrangler login
+npm run deploy
+```
+
+## Add a tool
+
+1. Put the logic in `lib/<tool>.ts` as pure TypeScript with no DOM, so the web UI and MCP share it.
+2. Add the page at `app/<tool>/page.tsx` and a client component next to it.
+3. Add an entry to `TOOLS` in `lib/site.ts`. The homepage, sitemap and metadata read from it.
+4. Register an MCP tool in `app/api/mcp/route.ts`.
+5. Add a check to `test/lib.test.ts`.
+
+## Layout
 
 ```text
-/                     # Homepage / tool index
-/qr/                  # Basic QR generator
-/custom/              # Styled/custom QR generator
-/decode/              # QR decoder (upload + camera)
-/socials/             # Social profile + social QR creator
-/main.css             # Homepage styles
-/customize-link-helper.js
-/robots.txt
-/sitemap.xml
-/SEO-IMPLEMENTATION.md
+app/            pages, styles (globals.css), MCP route (api/mcp)
+lib/            tool logic shared by web + MCP
+test/           node:test checks
 ```
 
-## Local Development
+---
 
-This is a static site, so any static server works.
-
-### Option 1: Python
-
-```bash
-python3 -m http.server 8080
-```
-
-Open `http://localhost:8080`.
-
-### Option 2: Node (if `npx` is available)
-
-```bash
-npx serve .
-```
-
-## Deployment
-
-Deploy to any static host:
-
-- GitHub Pages
-- Netlify
-- Vercel (static)
-- Cloudflare Pages
-
-Ensure these files remain at the site root after deploy:
-
-- `robots.txt`
-- `sitemap.xml`
-- `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`
-
-## Notes
-
-- Most features run client-side in the browser.
-- Camera-based decode requires HTTPS in production (or localhost in development).
-- SEO metadata and structured data are implemented across tool pages.
-
-## Add A New Tool
-
-1. Create a folder like `/my-tool/`.
-2. Add `index.html`, `style.css`, and `script.js`.
-3. Add a card/link on root `index.html`.
-4. Add canonical/meta/schema markup for SEO consistency.
-5. Update `sitemap.xml` if the new page should be indexed.
+by [DeadIndian](https://github.com/DeadIndian)
