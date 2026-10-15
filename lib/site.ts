@@ -42,6 +42,12 @@ export const TOOLS: Tool[] = [
 		description: "One QR for all your social profiles.",
 		category: "QR",
 	},
+	{
+		href: "/text",
+		name: "Bold & Italic Text",
+		description: "𝗕𝗼𝗹𝗱, 𝘪𝘵𝘢𝘭𝘪𝘤 and more for plain-text fields like LinkedIn. Copy, paste.",
+		category: "Text",
+	},
 ];
 
 export function tool(href: string): Tool {

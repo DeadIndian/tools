@@ -12,6 +12,7 @@ Niche web tools I use day to day, open source so anyone can use them. No login, 
 | Custom QR (shapes, gradients, frame, logo, caption) | [`/custom`](https://tools.golla.in/custom) | `qr_custom` |
 | QR Decoder (upload, paste, camera) | [`/decode`](https://tools.golla.in/decode) | `qr_decode` |
 | Social Links QR | [`/socials/create`](https://tools.golla.in/socials/create) | `social_profile_link` |
+| Bold & Italic Text (Unicode, for LinkedIn/X/etc.) | [`/text`](https://tools.golla.in/text) | `text_style`, `text_unstyle` |
 
 The web tools run entirely in your browser. The MCP endpoint processes each request and stores nothing.
 
@@ -33,7 +34,7 @@ Other clients:
 
 For stdio-only clients, use `npx -y mcp-remote https://tools.golla.in/api/mcp`.
 
-The QR tools return SVG markup as text. `qr_decode` takes base64 data, a `data:` URI, or an `https://` URL for a PNG or JPEG (max 5 MB).
+The QR tools return SVG markup as text; the text tools return paste-ready Unicode text. `qr_decode` takes base64 data, a `data:` URI, or an `https://` URL for a PNG or JPEG (max 5 MB).
 
 ## Develop
 
