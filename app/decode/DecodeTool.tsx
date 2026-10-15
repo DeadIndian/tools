@@ -112,6 +112,11 @@ export function DecodeTool() {
 
 	useEffect(() => stopCamera, [stopCamera]);
 
+	// Fetch + compile the decoder now, so the first scan doesn't wait on the ~1 MB download.
+	useEffect(() => {
+		prepareZXingModule({ overrides: { locateFile: (file: string) => `/${file}` }, fireImmediately: true });
+	}, []);
+
 	function switchTab(next: "upload" | "camera") {
 		if (next === tab) return;
 		setTab(next);
