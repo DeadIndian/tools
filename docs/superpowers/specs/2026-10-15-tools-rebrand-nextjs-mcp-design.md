@@ -64,7 +64,7 @@ test/
 - `qrcode-generator` (npm build of the vendored `qrcode.js`)
 - `jsqr`
 - `upng-js`, `jpeg-js`: pure-JS image decoding for server-side `qr_decode` (Workers has no sharp)
-- `mcp-handler`, `@modelcontextprotocol/sdk`, `zod`
+- `mcp-handler@2`, `@modelcontextprotocol/server@2`, `zod@4`
 - `@opennextjs/cloudflare`, `wrangler` (dev)
 
 The vendored `qrcode.js` and `jsqr.js` copies get deleted.
