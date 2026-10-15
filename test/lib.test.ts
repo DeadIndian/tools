@@ -5,7 +5,13 @@ import { encode as encodePng } from "fast-png";
 import jpeg from "jpeg-js";
 import { makeQr, plainSvg, QrTooLongError } from "../lib/qr";
 import { renderCustomSvg, normalizeConfig, DEFAULT_CONFIG, PRESETS } from "../lib/custom-qr";
+import { prepareZXingModule } from "zxing-wasm/reader";
 import { decodeRgba, decodeImageBytes, UnsupportedImageError } from "../lib/decode";
+
+// Node: load the ZXing .wasm from disk (the browser and Workers each load it their own way).
+prepareZXingModule({
+	overrides: { wasmBinary: readFileSync(new URL("../node_modules/zxing-wasm/dist/reader/zxing_reader.wasm", import.meta.url)).buffer as ArrayBuffer },
+});
 import { encodePayload, decodePayload, profileUrl } from "../lib/social";
 
 // Paint a QR matrix into an RGBA buffer with a 4-module quiet zone.
@@ -28,31 +34,31 @@ function rasterize(text: string, scale = 4) {
 
 const SAMPLES = ["https://tools.golla.in", "héllo 🙂 नमस्ते"];
 
-test("qr round-trips through decodeRgba, including unicode", () => {
+test("qr round-trips through decodeRgba, including unicode", async () => {
 	for (const text of SAMPLES) {
 		const { data, size } = rasterize(text);
-		assert.equal(decodeRgba(data, size, size), text);
+		assert.equal(await decodeRgba(data, size, size), text);
 	}
 });
 
-test("decodeRgba reads inverted (light-on-dark) codes", () => {
+test("decodeRgba reads inverted (light-on-dark) codes", async () => {
 	const { data, size } = rasterize("inverted");
 	for (let i = 0; i < data.length; i += 4) data[i] = data[i + 1] = data[i + 2] = 255 - data[i];
-	assert.equal(decodeRgba(data, size, size), "inverted");
+	assert.equal(await decodeRgba(data, size, size), "inverted");
 });
 
-test("decodeImageBytes handles PNG and JPEG, rejects junk", () => {
+test("decodeImageBytes handles PNG and JPEG, rejects junk", async () => {
 	const { data, size } = rasterize("png & jpeg");
 	const png = encodePng({ width: size, height: size, data: new Uint8Array(data.buffer), channels: 4, depth: 8 });
-	assert.equal(decodeImageBytes(png), "png & jpeg");
+	assert.equal(await decodeImageBytes(png), "png & jpeg");
 	const jpg = jpeg.encode({ data: Buffer.from(data), width: size, height: size }, 95).data;
-	assert.equal(decodeImageBytes(new Uint8Array(jpg)), "png & jpeg");
-	assert.throws(() => decodeImageBytes(new Uint8Array([1, 2, 3, 4])), UnsupportedImageError);
+	assert.equal(await decodeImageBytes(new Uint8Array(jpg)), "png & jpeg");
+	await assert.rejects(() => decodeImageBytes(new Uint8Array([1, 2, 3, 4])), UnsupportedImageError);
 });
 
-test("blank image decodes to null", () => {
+test("blank image decodes to null", async () => {
 	const data = new Uint8ClampedArray(64 * 64 * 4).fill(255);
-	assert.equal(decodeRgba(data, 64, 64), null);
+	assert.equal(await decodeRgba(data, 64, 64), null);
 });
 
 test("too-long text throws QrTooLongError", () => {
@@ -102,9 +108,17 @@ test("old v1 payloads from thisqr.works still decode", () => {
 
 // Real PNG flavors (made with ImageMagick): 1/4-bit gray, palette, interlaced, and transparent
 // RGBA/gray+alpha at 8 and 16 bit. Odd 151px width exercises sub-byte row padding.
-test("decodeImageBytes reads every PNG flavor, including transparent ones", () => {
+test("decodeImageBytes reads every PNG flavor, including transparent ones", async () => {
 	const dir = new URL("./fixtures/", import.meta.url);
 	const files = readdirSync(dir).filter((f) => f.endsWith(".png"));
 	assert.ok(files.length >= 7);
-	for (const f of files) assert.equal(decodeImageBytes(new Uint8Array(readFileSync(new URL(f, dir)))), "fixture ok", f);
+	for (const f of files) assert.equal(await decodeImageBytes(new Uint8Array(readFileSync(new URL(f, dir)))), "fixture ok", f);
+});
+
+// Styled presets (dots, gradients, round eyes) that jsQR, the previous decoder, could not read.
+test("decodeImageBytes reads styled QR codes", async () => {
+	for (const f of ["soft", "sunrise"]) {
+		const bytes = new Uint8Array(readFileSync(new URL(`./fixtures/styled/${f}.png`, import.meta.url)));
+		assert.equal(await decodeImageBytes(bytes), "styled ok https://tools.golla.in", f);
+	}
 });

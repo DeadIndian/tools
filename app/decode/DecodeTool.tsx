@@ -1,7 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { prepareZXingModule } from "zxing-wasm/reader";
 import { decodeRgba } from "@/lib/decode";
+
+// ZXing's .wasm is served from this site (copied into public/ by `npm run zxing`), not a CDN.
+prepareZXingModule({ overrides: { locateFile: (file: string) => `/${file}` } });
 import { copyText } from "../client-utils";
 
 const isUrl = (s: string) => /^https?:\/\//i.test(s) && URL.canParse(s);
@@ -42,7 +46,7 @@ export function DecodeTool() {
 		try {
 			const bitmap = await createImageBitmap(file);
 			const img = pixels(bitmap, bitmap.width, bitmap.height);
-			const data = decodeRgba(img.data, img.width, img.height);
+			const data = await decodeRgba(img.data, img.width, img.height);
 			if (data === null) return setStatus("No QR code found. Make sure the image is clear and well-lit.");
 			setResult(data);
 			setStatus("QR decoded.");
@@ -70,18 +74,19 @@ export function DecodeTool() {
 			setCameraStatus("Scanning...");
 			setResult("");
 			lastScan.current = "";
-			const scan = () => {
+			// One frame at a time: the next frame is grabbed only after the previous decode finishes.
+			const scan = async () => {
 				if (!stream.current) return;
 				if (v.readyState >= v.HAVE_ENOUGH_DATA) {
 					const img = pixels(v, v.videoWidth, v.videoHeight);
-					const data = decodeRgba(img.data, img.width, img.height, false);
-					if (data !== null && data !== lastScan.current) {
+					const data = await decodeRgba(img.data, img.width, img.height);
+					if (data !== null && data !== lastScan.current && stream.current) {
 						lastScan.current = data;
 						setResult(data);
 						setCameraStatus("QR code found.");
 					}
 				}
-				loop.current = requestAnimationFrame(scan);
+				if (stream.current) loop.current = requestAnimationFrame(scan);
 			};
 			scan();
 		} catch (err) {

@@ -5,6 +5,17 @@ const nextConfig: NextConfig = {
 	// Left unbundled so OpenNext resolves it with the "workerd" export condition. Bundled by Next,
 	// it picks the Node shim (Ajv), which uses new Function and crashes on Cloudflare Workers.
 	serverExternalPackages: ["@modelcontextprotocol/server", "mcp-handler"],
+	// OpenNext bundles every traced .wasm into the Worker. We only use ZXing's reader, and that
+	// one already ships as a Turbopack chunk; the rest would push the Worker past 3 MB gzipped.
+	outputFileTracingExcludes: {
+		"*": [
+			"node_modules/zxing-wasm/dist/full/**",
+			"node_modules/zxing-wasm/dist/writer/**",
+			"node_modules/zxing-wasm/dist/reader/*.wasm",
+			// Unused here: wrangler tooling.
+			"node_modules/blake3-wasm/**",
+		],
+	},
 	// Old static-site URLs (thisqr.works era). Printed QRs point at /socials/profile.html#...;
 	// browsers carry the #hash across redirects, so those keep working.
 	async redirects() {

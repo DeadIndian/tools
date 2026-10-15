@@ -1,4 +1,5 @@
 import { createMcpHandler } from "mcp-handler";
+import "@/lib/zxing-server";
 import { z } from "zod";
 import { SITE } from "@/lib/site";
 import { ECC_LEVELS, plainSvg, QrTooLongError } from "@/lib/qr";
@@ -187,7 +188,7 @@ const handler = createMcpHandler(
 				}),
 			},
 			safe(async ({ image }) => {
-				const result = decodeImageBytes(await loadImage(image));
+				const result = await decodeImageBytes(await loadImage(image));
 				return result === null ? fail("No QR code found in the image.") : ok(result);
 			}),
 		);

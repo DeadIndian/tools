@@ -7,6 +7,9 @@
   "license": "GPL-3.0-only",
   "repository": "github:DeadIndian/tools",
   "scripts": {
+    "zxing": "node -e \"require('fs').copyFileSync(require.resolve('zxing-wasm/reader/zxing_reader.wasm'),'public/zxing_reader.wasm')\"",
+    "predev": "npm run zxing",
+    "prebuild": "npm run zxing",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -18,13 +21,13 @@
     "@modelcontextprotocol/server": "^2.3.1",
     "fast-png": "^8.0.0",
     "jpeg-js": "^0.4.4",
-    "jsqr": "^1.4.0",
     "mcp-handler": "^2.3.0",
     "next": "^16.4.1",
     "qrcode-generator": "^2.0.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "zod": "^4.6.7"
+    "zod": "^4.6.7",
+    "zxing-wasm": "^3.1.5"
   },
   "devDependencies": {
     "@opennextjs/cloudflare": "^1.20.12",
